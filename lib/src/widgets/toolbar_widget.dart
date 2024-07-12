@@ -358,6 +358,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: CustomScrollView(
+                  physics: widget.htmlToolbarOptions.scrollPhysics,
                   scrollDirection: Axis.horizontal,
                   slivers: [
                     SliverFillRemaining(

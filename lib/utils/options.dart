@@ -25,7 +25,13 @@ class HtmlEditorOptions {
     this.webInitialScripts,
     this.shouldEnsureVisible = false,
     this.spellCheck = false,
+    this.disableVerticalScrolling = false,
   });
+
+  /// Disables verticalScrolling inside of HtmlEditor
+  ///
+  /// The default value is false, so user can scroll vertically
+  final bool disableVerticalScrolling;
 
   /// The editor will automatically adjust its height when the keyboard is active
   /// to prevent the keyboard overlapping the editor.
@@ -128,69 +134,65 @@ class HtmlEditorOptions {
 
 /// Options that modify the toolbar and its behavior
 class HtmlToolbarOptions {
-  const HtmlToolbarOptions({
-    this.audioExtensions,
-    this.customToolbarButtons = const [],
-    this.customToolbarInsertionIndices = const [],
-    this.defaultToolbarButtons = const [
-      StyleButtons(),
-      FontSettingButtons(fontSizeUnit: false),
-      FontButtons(clearAll: false),
-      ColorButtons(),
-      ListButtons(listStyles: false),
-      ParagraphButtons(
-          textDirection: false, lineHeight: false, caseConverter: false),
-      InsertButtons(
-          video: false,
-          audio: false,
-          table: false,
-          hr: false,
-          otherFile: false),
-    ],
-    this.otherFileExtensions,
-    this.imageExtensions,
-    this.initiallyExpanded = false,
-    this.linkInsertInterceptor,
-    this.mediaLinkInsertInterceptor,
-    this.mediaUploadInterceptor,
-    this.onButtonPressed,
-    this.onDropdownChanged,
-    this.onOtherFileLinkInsert,
-    this.onOtherFileUpload,
-    this.toolbarType = ToolbarType.nativeScrollable,
-    this.toolbarPosition = ToolbarPosition.aboveEditor,
-    this.videoExtensions,
-    this.dropdownElevation = 8,
-    this.dropdownIcon,
-    this.dropdownIconColor,
-    this.dropdownIconSize = 24,
-    this.dropdownItemHeight = kMinInteractiveDimension,
-    this.dropdownFocusColor,
-    this.dropdownBackgroundColor,
-    this.dropdownMenuDirection,
-    this.dropdownMenuMaxHeight,
-    this.dropdownBoxDecoration,
-    this.buttonColor,
-    this.buttonSelectedColor,
-    this.buttonFillColor,
-    this.buttonFocusColor,
-    this.buttonHighlightColor,
-    this.buttonHoverColor,
-    this.buttonSplashColor,
-    this.buttonBorderColor,
-    this.buttonSelectedBorderColor,
-    this.buttonBorderRadius,
-    this.buttonBorderWidth,
-    this.renderBorder = false,
-    this.textStyle,
-    this.separatorWidget =
-        const VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
-    this.renderSeparatorWidget = true,
-    this.toolbarItemHeight = 36,
-    this.gridViewHorizontalSpacing = 5,
-    this.gridViewVerticalSpacing = 5,
-    this.allowImagePicking = true,
-  });
+  const HtmlToolbarOptions(
+      {this.audioExtensions,
+      this.customToolbarButtons = const [],
+      this.customToolbarInsertionIndices = const [],
+      this.defaultToolbarButtons = const [
+        StyleButtons(),
+        FontSettingButtons(fontSizeUnit: false),
+        FontButtons(clearAll: false),
+        ColorButtons(),
+        ListButtons(listStyles: false),
+        ParagraphButtons(textDirection: false, lineHeight: false, caseConverter: false),
+        InsertButtons(video: false, audio: false, table: false, hr: false, otherFile: false),
+      ],
+      this.otherFileExtensions,
+      this.imageExtensions,
+      this.initiallyExpanded = false,
+      this.linkInsertInterceptor,
+      this.mediaLinkInsertInterceptor,
+      this.mediaUploadInterceptor,
+      this.onButtonPressed,
+      this.onDropdownChanged,
+      this.onOtherFileLinkInsert,
+      this.onOtherFileUpload,
+      this.toolbarType = ToolbarType.nativeScrollable,
+      this.toolbarPosition = ToolbarPosition.aboveEditor,
+      this.videoExtensions,
+      this.dropdownElevation = 8,
+      this.dropdownIcon,
+      this.dropdownIconColor,
+      this.dropdownIconSize = 24,
+      this.dropdownItemHeight = kMinInteractiveDimension,
+      this.dropdownFocusColor,
+      this.dropdownBackgroundColor,
+      this.dropdownMenuDirection,
+      this.dropdownMenuMaxHeight,
+      this.dropdownBoxDecoration,
+      this.buttonColor,
+      this.buttonSelectedColor,
+      this.buttonFillColor,
+      this.buttonFocusColor,
+      this.buttonHighlightColor,
+      this.buttonHoverColor,
+      this.buttonSplashColor,
+      this.buttonBorderColor,
+      this.buttonSelectedBorderColor,
+      this.buttonBorderRadius,
+      this.buttonBorderWidth,
+      this.renderBorder = false,
+      this.textStyle,
+      this.separatorWidget = const VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
+      this.renderSeparatorWidget = true,
+      this.toolbarItemHeight = 36,
+      this.gridViewHorizontalSpacing = 5,
+      this.gridViewVerticalSpacing = 5,
+      this.allowImagePicking = true,
+      this.scrollPhysics = const AlwaysScrollableScrollPhysics()});
+
+  /// Scrollphysics for toolbar widget Row
+  final ScrollPhysics scrollPhysics;
 
   /// Allows you to set the allowed extensions when a user inserts an audio file
   ///
@@ -250,8 +252,7 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(String, InsertFileType)?
-      mediaLinkInsertInterceptor;
+  final FutureOr<bool> Function(String, InsertFileType)? mediaLinkInsertInterceptor;
 
   /// Allows you to intercept any image/video/audio files being inserted into the editor.
   /// The function passes the PlatformFile class, which contains all the file data
@@ -262,8 +263,7 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(PlatformFile, InsertFileType)?
-      mediaUploadInterceptor;
+  final FutureOr<bool> Function(PlatformFile, InsertFileType)? mediaUploadInterceptor;
 
   /// Allows you to intercept any button press. The function passes the ButtonType
   /// enum, which tells you which button was pressed, the current selected status of
@@ -292,8 +292,7 @@ class HtmlToolbarOptions {
   /// (true = continue with internal handler, false = do not use internal handler)
   ///
   /// If no interceptor is set, the plugin uses the internal handler.
-  final FutureOr<bool> Function(DropdownType, dynamic, void Function(dynamic)?)?
-      onDropdownChanged;
+  final FutureOr<bool> Function(DropdownType, dynamic, void Function(dynamic)?)? onDropdownChanged;
 
   /// Called when a link is inserted for a file using the "other file" button.
   ///
@@ -415,8 +414,7 @@ class OtherOptions {
   const OtherOptions({
     this.decoration = const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(4)),
-      border:
-          Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
+      border: Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
     ),
     this.height = 400,
   });
