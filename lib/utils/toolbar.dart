@@ -14,17 +14,25 @@ class StyleButtons extends Toolbar {
   });
 }
 
+class OtherFontSettingsButtons extends Toolbar {
+  final bool fontName;
+
+  const OtherFontSettingsButtons({this.fontName = true});
+}
+
 /// Font setting group
 class FontSettingButtons extends Toolbar {
-  final bool fontName;
   final bool fontSize;
   final bool fontSizeUnit;
+  final bool foregroundColor;
 
-  const FontSettingButtons({
-    this.fontName = true,
-    this.fontSize = true,
-    this.fontSizeUnit = true,
-  });
+  const FontSettingButtons({this.fontSize = true, this.fontSizeUnit = true, this.foregroundColor = true});
+
+  List<Icon> getIcons() {
+    var icons = <Icon>[];
+    if (foregroundColor) icons.add(Icon(Icons.format_color_text));
+    return icons;
+  }
 }
 
 /// Font group
@@ -47,17 +55,12 @@ class FontButtons extends Toolbar {
     this.subscript = true,
   });
 
-  List<Icon> getIcons1() {
+  List<Icon> getIcons() {
     var icons = <Icon>[];
     if (bold) icons.add(Icon(Icons.format_bold));
     if (italic) icons.add(Icon(Icons.format_italic));
     if (underline) icons.add(Icon(Icons.format_underline));
     if (clearAll) icons.add(Icon(Icons.format_clear));
-    return icons;
-  }
-
-  List<Icon> getIcons2() {
-    var icons = <Icon>[];
     if (strikethrough) icons.add(Icon(Icons.format_strikethrough));
     if (superscript) icons.add(Icon(Icons.superscript));
     if (subscript) icons.add(Icon(Icons.subscript));
@@ -67,17 +70,14 @@ class FontButtons extends Toolbar {
 
 /// Color bar group
 class ColorButtons extends Toolbar {
-  final bool foregroundColor;
   final bool highlightColor;
 
   const ColorButtons({
-    this.foregroundColor = true,
     this.highlightColor = true,
   });
 
   List<Icon> getIcons() {
     var icons = <Icon>[];
-    if (foregroundColor) icons.add(Icon(Icons.format_color_text));
     if (highlightColor) icons.add(Icon(Icons.format_color_fill));
     return icons;
   }
