@@ -89,7 +89,9 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
       this.setState(() {
         docHeight = widget.otherOptions.height;
       });
-      await widget.controller.editorController!.evaluateJavascript(source: "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+      await widget.controller.editorController!.evaluateJavascript(
+          source:
+              "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (widget.htmlToolbarOptions.toolbarPosition != ToolbarPosition.custom ? (toolbarKey.currentContext?.size?.height ?? 0) : 0)});");
     }
   }
 
@@ -141,7 +143,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                   contextMenu: widget.htmlEditorOptions.mobileContextMenu as ContextMenu?,
                   gestureRecognizers: {
                     if (!widget.htmlEditorOptions.disableVerticalScrolling) Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
-                    Factory<LongPressGestureRecognizer>(() => LongPressGestureRecognizer(duration: widget.htmlEditorOptions.mobileLongPressDuration)),
+                    if (!widget.htmlEditorOptions.disableVerticalScrolling)
+                      Factory<LongPressGestureRecognizer>(() => LongPressGestureRecognizer(duration: widget.htmlEditorOptions.mobileLongPressDuration)),
+                    Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
+                    if (!widget.htmlEditorOptions.disableVerticalScrolling) Factory<PanGestureRecognizer>(PanGestureRecognizer.new),
                   },
                   shouldOverrideUrlLoading: (controller, action) async {
                     if (!action.request.url.toString().contains(filePath)) {
@@ -161,7 +166,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     if (widget.htmlEditorOptions.adjustHeightForKeyboard && mounted && !visibleStream.isClosed) {
                       Future<void> setHeightJS() async {
                         await controller.evaluateJavascript(source: """
-                                \$('div.note-editable').outerHeight(${max(docHeight - (toolbarKey.currentContext?.size?.height ?? 0), 30)});
+                                \$('div.note-editable').outerHeight(${max(docHeight - (widget.htmlToolbarOptions.toolbarPosition != ToolbarPosition.custom ? (toolbarKey.currentContext?.size?.height ?? 0) : 0), 30)});
                                 // from https://stackoverflow.com/a/67152280
                                 var selection = window.getSelection();
                                 if (selection.rangeCount) {
@@ -334,7 +339,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           \$('#summernote-2').summernote({
                               placeholder: "${widget.htmlEditorOptions.hint ?? ""}",
                               tabsize: 2,
-                              height: ${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)},
+                              height: ${widget.otherOptions.height - (widget.htmlToolbarOptions.toolbarPosition != ToolbarPosition.custom ? (toolbarKey.currentContext?.size?.height ?? 0) : 0)},
                               toolbar: $summernoteToolbar
                               disableGrammar: false,
                               spellCheck: ${widget.htmlEditorOptions.spellCheck},
@@ -430,14 +435,15 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                                 resetHeight();
                               } else {
                                 setState(mounted, this.setState, () {
-                                  docHeight = (double.tryParse(height.first.toString()) ?? widget.otherOptions.height) + (toolbarKey.currentContext?.size?.height ?? 0);
+                                  docHeight = (double.tryParse(height.first.toString()) ?? widget.otherOptions.height) +
+                                      (widget.htmlToolbarOptions.toolbarPosition != ToolbarPosition.custom ? (toolbarKey.currentContext?.size?.height ?? 0) : 0);
                                 });
                                 widget.controller.editorController!.evaluateJavascript(source: "\$('div.note-editable').outerHeight($docHeight);");
                               }
                             });
                         await controller.evaluateJavascript(source: "var height = document.body.scrollHeight; window.flutter_inappwebview.callHandler('setHeight', height);");
                       }
-                      //reset the editor's height if the keyboard disappears at any point
+                      //reset the editor's height if the keyboard disappears at any pointASD
                       if (widget.htmlEditorOptions.adjustHeightForKeyboard) {
                         var keyboardVisibilityController = KeyboardVisibilityController();
                         keyboardVisibilityController.onChange.listen((bool visible) {
